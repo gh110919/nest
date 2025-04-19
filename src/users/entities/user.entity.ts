@@ -1,10 +1,9 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
-  VersionColumn,
 } from 'typeorm';
 
 @Entity()
@@ -15,21 +14,24 @@ export class User {
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
 
+  @Column({ nullable: true })
+  phoneNumber: string;
+
+  @Column()
+  password: string;
+
   @Column({ type: 'varchar', length: 100 })
   firstName: string;
 
   @Column({ type: 'varchar', length: 100 })
   lastName: string;
 
-  @Column({ type: 'int', default: 18 })
-  age: number;
+  @Column({ default: false })
+  isActive: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @VersionColumn()
-  version: number;
 }

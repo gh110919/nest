@@ -1,20 +1,22 @@
+import { config } from 'dotenv';
 import { DataSource } from 'typeorm';
+import { User } from './users/entities/user.entity';
+
+const { PG_HOST, PG_PORT, PG_USR, PG_PASS, PG_DB } = config({
+  path: '.local/public.env',
+}).parsed!;
+console.log('PG_HOST', PG_HOST, PG_PORT, PG_USR, PG_PASS, PG_DB);
+const entities = [User];
 
 export const dataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'service_postgres_username',
-  password: 'service_postgres_password',
-  database: 'service_postgres_database',
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/migrations/**/*{.ts,.js}'],
+  host: PG_HOST,
+  port: +PG_PORT,
+  username: PG_USR,
+  password: PG_PASS,
+  database: PG_DB,
   logging: true,
-  migrationsRun: false,
-  migrationsTransactionMode: 'each',
-  extra: {
-    max: 10,
-    connectionTimeoutMillis: 5000,
-  },
-  ssl: false,
+  synchronize: true,
+  migrationsRun: true,
+  entities,
 });

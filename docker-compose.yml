@@ -1,4 +1,31 @@
+networks:
+  network_application:
+    driver: bridge
+volumes:
+  volume_application:
+  volume_postgres:
 services:
+  application:
+    build:
+      context: .
+      dockerfile: bun.dockerfile
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '1'
+          memory: '1G'
+    networks:
+      - network_application
+    ports:
+      - '${APP_PORT}:3000/tcp'
+    volumes:
+      - 'volume_application:${APP_VLM}'
+    stdin_open: true
+    tty: true
+    restart: always
+    image: image_application
+    container_name: container_application
   service_postgres:
     image: postgres
     container_name: container_postgres
@@ -6,17 +33,12 @@ services:
     stdin_open: true
     tty: true
     networks:
-      - local
+      - network_application
     ports:
-      - '5432:5432/tcp'
+      - '${PG_PORT}:5432/tcp'
     volumes:
-      - volume_postgres:/home/volume_postgres
+      - volume_postgres:${PG_VLM}
     environment:
-      POSTGRES_USER: service_postgres_username
-      POSTGRES_PASSWORD: service_postgres_password
-      POSTGRES_DB: service_postgres_database
-networks:
-  local:
-    driver: bridge
-volumes:
-  volume_postgres:
+      POSTGRES_USER: ${PG_USR}
+      POSTGRES_PASSWORD: ${PG_PASS}
+      POSTGRES_DB: ${PG_DB}
